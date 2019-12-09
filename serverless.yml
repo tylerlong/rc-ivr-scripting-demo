@@ -1,0 +1,30 @@
+service: ivr-scripting-demo
+
+provider:
+  stage: prod
+  name: aws
+  runtime: nodejs10.x
+  region: us-east-1
+  memorySize: 256
+  timeout: 30 # maximum value allowed by api gateway
+  environment: ${file(./.env.yml)}
+  tags:
+    Department: dev
+    Team: dre
+    Owner: Tyler Liu
+    Environment: temp
+    Name: dre-ivr-scripting-demo
+  stackTags: ${self:provider.tags}
+
+package:
+  exclude:
+    - ./**
+    - '!index.js'
+    - '!node_modules/**'
+  excludeDevDependencies: true
+
+functions:
+  app:
+    handler: index.app
+    events:
+      - http: 'ANY {proxy+}'
