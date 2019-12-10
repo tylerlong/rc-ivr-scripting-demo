@@ -13,6 +13,7 @@ app.use(express.json())
 app.post('/on-call-enter', async (req, res) => {
   console.log('/on-call-enter')
   const { partyId, sessionId } = req.body
+  res.status(204).send()
   await rc.post(`/restapi/v1.0/account/~/telephony/sessions/${sessionId}/parties/${partyId}/play`, {
     resources: [
       {
@@ -22,7 +23,6 @@ app.post('/on-call-enter', async (req, res) => {
     interruptByDtmf: false,
     repeatCount: 1
   })
-  res.status(204).send()
 })
 
 app.post('/on-call-exit', (req, res) => {
