@@ -17,11 +17,6 @@ const createAsyncProxy = functionName => {
       console.log('return to IVR server side')
       return {
         statusCode: 204
-        // headers: {
-        //   'Validation-Token': event.headers['Validation-Token'],
-        //   'Content-Type': 'text/html'
-        // },
-        // body: '<!doctype><html><body><script>close()</script><p>Please close this page</p></body></html>'
       }
     }
     console.log('proxy hit')
