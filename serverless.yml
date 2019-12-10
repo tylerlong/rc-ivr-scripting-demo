@@ -8,6 +8,11 @@ provider:
   memorySize: 256
   timeout: 30 # maximum value allowed by api gateway
   environment: ${file(./.env.yml)}
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - lambda:InvokeFunction
+      Resource: "*"
   tags:
     Department: dev
     Team: dre
