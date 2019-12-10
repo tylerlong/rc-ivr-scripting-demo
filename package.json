@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "aws": "^0.0.3-2",
     "express": "^4.17.1",
     "ringcentral-js-concise": "^0.7.8",
     "serverless-http": "^2.3.0"

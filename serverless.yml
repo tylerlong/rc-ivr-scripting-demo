@@ -26,5 +26,7 @@ package:
 functions:
   app:
     handler: index.app
+  proxy:
+    handler: index.proxy
     events:
       - http: 'ANY {proxy+}'
