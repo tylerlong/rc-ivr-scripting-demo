@@ -27,14 +27,14 @@ app.post('/on-call-enter', async (req, res) => {
   } catch (e) {
     console.log(e.message.replace(/[\r\n]+/g, '\t'))
     try {
-      await rc.get(`/restapi/v1.0/account/~/telephony/sessions/${sessionId}`)
-      console.log(`session ${sessionId} exists`)
+      const r1 = await rc.get(`/restapi/v1.0/account/~/telephony/sessions/${sessionId}`)
+      console.log(`session ${sessionId} exists: ${JSON.stringify(r1.data)}`)
     } catch (e) {
       console.log(`session ${sessionId} returns ${e.status} ${e.statusText}`)
     }
     try {
-      await rc.get(`/restapi/v1.0/account/~/telephony/sessions/${sessionId}/parties/${partyId}`)
-      console.log(`party ${partyId} exists`)
+      const r2 = await rc.get(`/restapi/v1.0/account/~/telephony/sessions/${sessionId}/parties/${partyId}`)
+      console.log(`party ${partyId} exists: : ${JSON.stringify(r2.data)}`)
     } catch (e) {
       console.log(`party ${partyId} returns ${e.status} ${e.statusText}`)
     }
