@@ -345,10 +345,10 @@ aws-sdk@^2.584.0:
     uuid "3.3.2"
     xml2js "0.4.19"
 
-axios@^0.18.0:
-  version "0.18.1"
-  resolved "https://registry.yarnpkg.com/axios/-/axios-0.18.1.tgz#ff3f0de2e7b5d180e757ad98000f1081b87bcea3"
-  integrity sha512-0BfJq4NSfQXd+SkFdrvFbG7addhYSBA2mQwISr46pD6E5iqkWg02RAs8vyTT/j0RTnoYmeXauBuSv1qKwR179g==
+axios@^0.19.0:
+  version "0.19.0"
+  resolved "https://registry.yarnpkg.com/axios/-/axios-0.19.0.tgz#8e09bff3d9122e133f7b8101c8fbdd00ed3d2ab8"
+  integrity sha512-1uvKqKQta3KBxIz14F2v06AEHZ/dIoeKfbTRkK1E5oqjDnuEerLmYTgJB5AiQZHJcljpg1TuRzdjDR06qNk0DQ==
   dependencies:
     follow-redirects "1.5.10"
     is-buffer "^2.0.2"
@@ -3510,15 +3510,15 @@ rimraf@^2.2.8:
   dependencies:
     glob "^7.1.3"
 
-ringcentral-js-concise@^0.7.7:
-  version "0.7.7"
-  resolved "https://registry.yarnpkg.com/ringcentral-js-concise/-/ringcentral-js-concise-0.7.7.tgz#2ad84d6be6d2a39cab50e60f981265ca4313f434"
-  integrity sha512-fCOdXrdX1qzIF9begVy8hvUEs5JWXkDFyvz1Z7CUePbs6eAKkqXT6CetUHqxax0FPTKpFrVG16wTOkPURIc5EA==
+ringcentral-js-concise@^0.7.8:
+  version "0.7.8"
+  resolved "https://registry.yarnpkg.com/ringcentral-js-concise/-/ringcentral-js-concise-0.7.8.tgz#597256e71b4e46c68413c53894bc0b14398eb828"
+  integrity sha512-v7h9LFVgxwhQfoIZZJpLgPD0PILVz4PBcFFNu3dIctEfdhZ8yNz4T5FXriVJKNEQzCLat/zqb3CAM8LsRHDi0Q==
   dependencies:
-    axios "^0.18.0"
+    axios "^0.19.0"
     js-base64 "^2.5.1"
     multipart-mixed-parser "^0.1.3"
-    urijs "^1.19.1"
+    urijs "^1.19.2"
 
 run-async@^2.2.0:
   version "2.3.0"
@@ -4251,7 +4251,7 @@ uri-js@^4.2.2:
   dependencies:
     punycode "^2.1.0"
 
-urijs@^1.19.1:
+urijs@^1.19.2:
   version "1.19.2"
   resolved "https://registry.yarnpkg.com/urijs/-/urijs-1.19.2.tgz#f9be09f00c4c5134b7cb3cf475c1dd394526265a"
   integrity sha512-s/UIq9ap4JPZ7H1EB5ULo/aOUbWqfDi7FKzMC2Nz+0Si8GiT1rIEaprt8hy3Vy2Ex2aJPpOQv4P4DuOZ+K1c6w==

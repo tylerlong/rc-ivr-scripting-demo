@@ -16,7 +16,7 @@ app.post('/on-call-enter', async (req, res) => {
   await rc.post(`/restapi/v1.0/account/~/telephony/sessions/${sessionId}/parties/${partyId}/play`, {
     resources: [
       {
-        uri: 'https://raw.githubusercontent.com/tylerlong/rc-ivr-scripting-demo/master/greetings.wav'
+        uri: 'http://chuntaoliu.com/rc-ivr-scripting-demo/greetings.wav'
       }
     ],
     interruptByDtmf: false,
