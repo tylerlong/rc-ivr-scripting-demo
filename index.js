@@ -1,18 +1,6 @@
 const express = require('express')
 const serverlessHTTP = require('serverless-http')
 const RingCentral = require('ringcentral-js-concise').default
-// const RingCentral = require('@ringcentral/sdk').SDK
-
-// const rc = new RingCentral({
-//   server: process.env.RINGCENTRAL_SERVER_URL,
-//   clientId: 'fake',
-//   clientSecret: 'fake'
-// })
-// rc.platform().auth().setData({
-//   access_token: process.env.RINGCENTRAL_TOKEN,
-//   expire_time: Date.now() + 99999999999,
-//   refresh_token: 'fake'
-// })
 
 const rc = new RingCentral('', '', process.env.RINGCENTRAL_SERVER_URL)
 rc.token({
@@ -28,7 +16,7 @@ app.post('/on-call-enter', async (req, res) => {
   await rc.post(`/restapi/v1.0/account/~/telephony/sessions/${sessionId}/parties/${partyId}/play`, {
     resources: [
       {
-        uri: 'http://example.com/ivr-app-example/greeting.wav'
+        uri: 'https://raw.githubusercontent.com/tylerlong/rc-ivr-scripting-demo/master/greetings.wav'
       }
     ],
     interruptByDtmf: false,
