@@ -25,6 +25,7 @@ package:
   exclude:
     - ./**
     - '!index.js'
+    - '!app.js'
     - '!node_modules/**'
   excludeDevDependencies: true
 
