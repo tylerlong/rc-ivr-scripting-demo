@@ -14,16 +14,31 @@ app.use(express.json())
 app.post('/on-call-enter', async (req, res) => {
   console.log('/on-call-enter')
   const { partyId, sessionId } = req.body
-  // res.status(204).send()
-  await rc.post(`/restapi/v1.0/account/~/telephony/sessions/${sessionId}/parties/${partyId}/play`, {
-    resources: [
-      {
-        uri: 'http://chuntaoliu.com/rc-ivr-scripting-demo/greetings.wav'
-      }
-    ],
-    interruptByDtmf: false,
-    repeatCount: 1
-  })
+  try {
+    await rc.post(`/restapi/v1.0/account/~/telephony/sessions/${sessionId}/parties/${partyId}/play`, {
+      resources: [
+        {
+          uri: 'http://chuntaoliu.com/rc-ivr-scripting-demo/greetings.wav'
+        }
+      ],
+      interruptByDtmf: false,
+      repeatCount: 1
+    })
+  } catch (e) {
+    console.log(e.message.replace(/[\r\n]+/g, '\t'))
+    try {
+      await rc.get(`/restapi/v1.0/account/~/telephony/sessions/${sessionId}`)
+      console.log(`session ${sessionId} exists`)
+    } catch (e) {
+      console.log(`session ${sessionId} returns ${e.status} ${e.statusText}`)
+    }
+    try {
+      await rc.get(`/restapi/v1.0/account/~/telephony/sessions/${sessionId}/parties/${partyId}`)
+      console.log(`party ${partyId} exists`)
+    } catch (e) {
+      console.log(`party ${partyId} returns ${e.status} ${e.statusText}`)
+    }
+  }
 })
 
 app.post('/on-call-exit', (req, res) => {
@@ -61,6 +76,7 @@ const createAsyncProxy = functionName => {
         body: '<!doctype><html><body><script>close()</script><p>Please close this page</p></body></html>'
       }
     }
+    console.log('proxy hit')
     return lambdaFunction()
   }
 }
