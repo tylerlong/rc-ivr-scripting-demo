@@ -1,6 +1,8 @@
 const express = require('express')
 const RingCentral = require('ringcentral-js-concise').default
 
+const { Session } = require('./models')
+
 const app = express()
 app.use(express.json())
 
@@ -54,6 +56,12 @@ app.post('/on-command-update', async (req, res) => {
 
 app.post('/on-command-error', (req, res) => {
   console.log('/on-command-error', JSON.stringify(req.body))
+})
+
+app.put('/setup-database', async (req, res) => {
+  console.log('/setup-database')
+  await Session.sync()
+  console.log('/setup-database done')
 })
 
 module.exports = app
