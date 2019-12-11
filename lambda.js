@@ -1,4 +1,3 @@
-// const express = require('express')
 const serverlessHTTP = require('serverless-http')
 const Lambda = require('aws-sdk/clients/lambda')
 

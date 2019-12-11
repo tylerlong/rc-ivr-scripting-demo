@@ -24,15 +24,15 @@ provider:
 package:
   exclude:
     - ./**
-    - '!index.js'
+    - '!lambda.js'
     - '!app.js'
     - '!node_modules/**'
   excludeDevDependencies: true
 
 functions:
   app:
-    handler: index.app
+    handler: lambda.app
   proxy:
-    handler: index.proxy
+    handler: lambda.proxy
     events:
       - http: 'ANY {proxy+}'

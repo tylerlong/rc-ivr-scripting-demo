@@ -11,32 +11,32 @@ rc.token({
 
 app.post('/on-call-enter', async (req, res) => {
   console.log('/on-call-enter')
-  res.status(204).send()
   const { partyId, sessionId } = req.body
   try {
-    await rc.post(`/restapi/v1.0/account/~/telephony/sessions/${sessionId}/parties/${partyId}/play`, {
+    const r1 = await rc.get(`/restapi/v1.0/account/~/telephony/sessions/${sessionId}`)
+    console.log(`session ${sessionId} exists: ${JSON.stringify(r1.data)}`)
+  } catch (e) {
+    console.log(`session ${sessionId} returns ${e.status} ${e.statusText}`)
+  }
+  try {
+    const r2 = await rc.get(`/restapi/v1.0/account/~/telephony/sessions/${sessionId}/parties/${partyId}`)
+    console.log(`party ${partyId} exists: : ${JSON.stringify(r2.data)}`)
+  } catch (e) {
+    console.log(`party ${partyId} returns ${e.status} ${e.statusText}`)
+  }
+  try {
+    const r = await rc.post(`/restapi/v1.0/account/~/telephony/sessions/${sessionId}/parties/${partyId}/play`, {
       resources: [
         {
           uri: 'http://chuntaoliu.com/rc-ivr-scripting-demo/greetings.wav'
         }
       ],
       interruptByDtmf: false,
-      repeatCount: 1
+      repeatCount: 5
     })
+    console.log(`play command response body: ${JSON.stringify(r.data)}`)
   } catch (e) {
     console.log(e.message.replace(/[\r\n]+/g, '\t'))
-    try {
-      const r1 = await rc.get(`/restapi/v1.0/account/~/telephony/sessions/${sessionId}`)
-      console.log(`session ${sessionId} exists: ${JSON.stringify(r1.data)}`)
-    } catch (e) {
-      console.log(`session ${sessionId} returns ${e.status} ${e.statusText}`)
-    }
-    try {
-      const r2 = await rc.get(`/restapi/v1.0/account/~/telephony/sessions/${sessionId}/parties/${partyId}`)
-      console.log(`party ${partyId} exists: : ${JSON.stringify(r2.data)}`)
-    } catch (e) {
-      console.log(`party ${partyId} returns ${e.status} ${e.statusText}`)
-    }
   }
 })
 
