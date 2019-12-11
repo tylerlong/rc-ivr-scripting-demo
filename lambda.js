@@ -24,3 +24,7 @@ const createAsyncProxy = functionName => {
 }
 
 module.exports.proxy = createAsyncProxy('app')
+
+module.exports.maintain = (event, context) => {
+  // todo: clean up the database
+}
