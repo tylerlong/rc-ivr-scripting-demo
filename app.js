@@ -11,7 +11,8 @@ rc.token({
 
 app.post('/on-call-enter', async (req, res) => {
   console.log('/on-call-enter')
-  const { partyId, sessionId } = req.body
+  const { sessionId } = req.body
+  const partyId = req.body.inParty.id
   try {
     const r1 = await rc.get(`/restapi/v1.0/account/~/telephony/sessions/${sessionId}`)
     console.log(`session ${sessionId} exists: ${JSON.stringify(r1.data)}`)
