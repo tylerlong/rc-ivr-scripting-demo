@@ -15,13 +15,13 @@ Phone: You like green
 ## How to generate audio?
 
 ```
-say -o greetings.wav --data-format=LEI16@48000 "Welcome to the world of RingCentral IVR Scripting, we are so exicted to have you here."
+say -o docs/greetings.wav --data-format=LEI16@48000 "Welcome to the IVR Scripting demo"
 ```
 
 ### How to play audio locally?
 
 ```
-play -e signed -c 1 -b 16 -r 48000 greetings.wav
+play -e signed -c 1 -b 16 -r 48000 docs/greetings.wav
 ```
 
 
