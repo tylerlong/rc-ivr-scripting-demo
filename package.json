@@ -1,16 +1,11 @@
 {
-  "scripts": {
-    "server": "node -r dotenv-override-true/config express.js"
-  },
   "dependencies": {
     "aws": "^0.0.3-2",
-    "dotenv-override-true": "^6.2.0",
     "express": "^4.17.1",
     "ringcentral-js-concise": "^0.7.8",
     "serverless-http": "^2.3.0"
   },
   "devDependencies": {
-    "ngrok": "^3.2.5",
     "serverless": "^1.59.3",
     "standard": "^14.3.1",
     "yarn-upgrade-all": "^0.5.2"
