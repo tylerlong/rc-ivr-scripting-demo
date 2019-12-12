@@ -15,42 +15,100 @@ app.post('/on-call-enter', async (req, res) => {
   console.log('/on-call-enter', JSON.stringify(req.body))
   const { sessionId } = req.body
   const partyId = req.body.inParty.id
-  try {
-    const r = await rc.post(`/restapi/v1.0/account/~/telephony/sessions/${sessionId}/parties/${partyId}/play`, {
-      resources: [
-        {
-          uri: 'http://chuntaoliu.com/rc-ivr-scripting-demo/greetings.wav'
-        }
-      ],
-      interruptByDtmf: false,
-      repeatCount: 1
-    })
-    console.log(`play command response body: ${JSON.stringify(r.data)}`)
-  } catch (e) {
-    console.log(e.message.replace(/[\r\n]+/g, '\t'))
-  }
+  const r = await rc.post(`/restapi/v1.0/account/~/telephony/sessions/${sessionId}/parties/${partyId}/play`, {
+    resources: [
+      {
+        uri: 'http://chuntaoliu.com/rc-ivr-scripting-demo/greetings.wav'
+      }
+    ],
+    interruptByDtmf: false,
+    repeatCount: 1
+  })
+  console.log(`play command response body: ${JSON.stringify(r.data)}`)
+  await Session.create({
+    sessionId,
+    partyId,
+    data: {
+      greetingId: r.data.id
+    }
+  })
 })
 
 app.post('/on-call-exit', (req, res) => {
   console.log('/on-call-exit', JSON.stringify(req.body))
 })
 
+const playQuestion = async session => {
+  const r = await rc.post(`/restapi/v1.0/account/~/telephony/sessions/${session.sessionId}/parties/${session.partyId}/play`, {
+    resources: [
+      {
+        uri: 'http://chuntaoliu.com/rc-ivr-scripting-demo/question.wav'
+      }
+    ],
+    interruptByDtmf: false,
+    repeatCount: 1
+  })
+  await session.update({
+    data: { ...session.data, questionId: r.data.id }
+  })
+}
+
 app.post('/on-command-update', async (req, res) => {
   console.log('/on-command-update', JSON.stringify(req.body))
-  const { command, status, sessionId, partyId, parameters } = req.body
+  const { command, commandId, status, sessionId, partyId, parameters } = req.body
+  const session = await Session.findOne({ where: { sessionId, partyId } })
+  if (session === null) {
+    return
+  }
   if (command === 'Play' && status === 'Completed') {
-    try {
-      const r = await rc.post(`/restapi/v1.0/account/~/telephony/sessions/${sessionId}/parties/${partyId}/collect`, {
+    if (session.data.greetingId === commandId) { // After playing greeting
+      await playQuestion(session)
+    } else if (session.data.questionId === commandId) { // After playing question
+      await rc.post(`/restapi/v1.0/account/~/telephony/sessions/${sessionId}/parties/${partyId}/collect`, {
         patterns: ['1', '2', '3'],
         timeout: 600000,
         interDigitTimeout: 2000
       })
-      console.log(`collect command response body: ${JSON.stringify(r.data)}`)
-    } catch (e) {
-      console.log(e.message.replace(/[\r\n]+/g, '\t'))
+    } else if (session.data.colorId === commandId) { // After playing color confirmation
+      await rc.post(`/restapi/v1.0/account/~/telephony/sessions/${sessionId}/parties/${partyId}/play`, {
+        resources: [
+          {
+            uri: 'http://chuntaoliu.com/rc-ivr-scripting-demo/bye.wav'
+          }
+        ],
+        interruptByDtmf: false,
+        repeatCount: 1
+      })
+    } else if (session.data.invalidId === commandId) { // after playing invalid
+      await playQuestion(session)
     }
   } else if (command === 'Collect' && status === 'Completed' && parameters && parameters.digits) {
-    console.log(`You chose ${parameters.digits}`)
+    const color = { 1: 'red', 2: 'green', 3: 'blue' }[parameters.digits]
+    const r = await rc.post(`/restapi/v1.0/account/~/telephony/sessions/${sessionId}/parties/${partyId}/play`, {
+      resources: [
+        {
+          uri: `http://chuntaoliu.com/rc-ivr-scripting-demo/${color}.wav`
+        }
+      ],
+      interruptByDtmf: false,
+      repeatCount: 1
+    })
+    await session.update({
+      data: { ...session.data, colorId: r.data.id }
+    })
+  } else if (command === 'Collect' && status === 'Not Found') {
+    const r = await rc.post(`/restapi/v1.0/account/~/telephony/sessions/${sessionId}/parties/${partyId}/play`, {
+      resources: [
+        {
+          uri: 'http://chuntaoliu.com/rc-ivr-scripting-demo/invalid.wav'
+        }
+      ],
+      interruptByDtmf: false,
+      repeatCount: 1
+    })
+    await session.update({
+      data: { ...session.data, invalidId: r.data.id }
+    })
   }
 })
 
