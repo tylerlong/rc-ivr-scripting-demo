@@ -1,7 +1,10 @@
 const serverlessHTTP = require('serverless-http')
 const Lambda = require('aws-sdk/clients/lambda')
+const Sequelize = require('sequelize')
 
 const app = require('./app')
+const { Session } = require('./models')
+
 module.exports.app = serverlessHTTP(app)
 
 const createAsyncProxy = functionName => {
@@ -25,6 +28,12 @@ const createAsyncProxy = functionName => {
 
 module.exports.proxy = createAsyncProxy('app')
 
-module.exports.maintain = (event, context) => {
-  // todo: clean up the database
+module.exports.maintain = async (event, context) => {
+  await Session.destroy({ // delete records older than 1 hour
+    where: {
+      created_at: {
+        [Sequelize.Op.lt]: new Date(Date.now() - 60 * 60 * 1000)
+      }
+    }
+  })
 }
