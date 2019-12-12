@@ -1,14 +1,20 @@
 const express = require('express')
-const RingCentral = require('ringcentral-js-concise').default
+const RingCentral = require('@ringcentral/sdk').SDK
 
 const { Session } = require('./models')
 
 const app = express()
 app.use(express.json())
 
-const rc = new RingCentral('', '', process.env.RINGCENTRAL_SERVER_URL)
-rc.token({
-  access_token: process.env.RINGCENTRAL_TOKEN
+const rc = new RingCentral({
+  clientId: '',
+  clientSecret: '',
+  server: process.env.RINGCENTRAL_SERVER_URL
+})
+rc.platform().auth().setData({
+  access_token: process.env.RINGCENTRAL_TOKEN,
+  expires_in: 999999999,
+  refresh_token_expires_in: 999999999
 })
 
 app.post('/on-call-enter', async (req, res) => {
@@ -24,12 +30,13 @@ app.post('/on-call-enter', async (req, res) => {
     interruptByDtmf: false,
     repeatCount: 1
   })
-  console.log(`play command response body: ${JSON.stringify(r.data)}`)
+  const json = await r.json()
+  console.log(`play command response body: ${JSON.stringify(json)}`)
   await Session.create({
     sessionId,
     partyId,
     data: {
-      greetingId: r.data.id
+      greetingId: json.id
     }
   })
 })
@@ -48,8 +55,9 @@ const playQuestion = async session => {
     interruptByDtmf: false,
     repeatCount: 1
   })
+  const json = await r.json()
   await session.update({
-    data: { ...session.data, questionId: r.data.id }
+    data: { ...session.data, questionId: json.id }
   })
 }
 
@@ -93,8 +101,9 @@ app.post('/on-command-update', async (req, res) => {
       interruptByDtmf: false,
       repeatCount: 1
     })
+    const json = await r.json()
     await session.update({
-      data: { ...session.data, colorId: r.data.id }
+      data: { ...session.data, colorId: json.id }
     })
   } else if (command === 'Collect' && status === 'Not Found') {
     const r = await rc.post(`/restapi/v1.0/account/~/telephony/sessions/${sessionId}/parties/${partyId}/play`, {
@@ -106,8 +115,9 @@ app.post('/on-command-update', async (req, res) => {
       interruptByDtmf: false,
       repeatCount: 1
     })
+    const json = await r.json()
     await session.update({
-      data: { ...session.data, invalidId: r.data.id }
+      data: { ...session.data, invalidId: json.id }
     })
   }
 })
