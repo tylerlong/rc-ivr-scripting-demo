@@ -7,8 +7,6 @@ const app = express()
 app.use(express.json())
 
 const rc = new RingCentral({
-  clientId: '',
-  clientSecret: '',
   server: process.env.RINGCENTRAL_SERVER_URL
 })
 rc.platform().auth().setData({
