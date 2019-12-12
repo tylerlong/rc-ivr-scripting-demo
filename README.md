@@ -18,7 +18,32 @@ Phone: You like green
 Phone: The demo is over, you may hang up, bye
 ```
 
-## How to generate audio?
+## Setup
+
+```
+cp .env.sample.yml .env.yml
+```
+
+Edit `.env.yml`, specify `RINGCENTRAL_TOKEN`. Also set password for database (search for "username" & "password" and replace them)
+
+
+## Deploy
+
+```
+npx sls deploy
+```
+
+
+## Setup database
+
+```
+curl -X PUT https://<aws-api-gateway-uri>/prod/setup-database
+```
+
+
+## Misc.
+
+### How to generate audio for testing?
 
 ```
 say -o docs/greetings.wav --data-format=LEI16@48000 "Welcome to the IVR Scripting demo"
@@ -31,10 +56,10 @@ play -e signed -c 1 -b 16 -r 48000 docs/greetings.wav
 ```
 
 
-## Why Lambda proxy?
+### Why Lambda proxy?
 
 Because:
 1. We want to send HTTP responses as soon as possible
 1. We also want to take our time to do things in the background.
 
-Proxy with respond quickly and start a thread to continue to do things.
+Proxy will respond quickly and start a thread to continue to do things.
