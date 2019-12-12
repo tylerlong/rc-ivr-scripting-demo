@@ -44,7 +44,7 @@ const askQuestion = async session => {
 
 app.post('/on-call-enter', async (req, res) => {
   console.log('/on-call-enter', JSON.stringify(req.body))
-  const { sessionId } = req.body
+  const sessionId = req.body.sessionId
   const partyId = req.body.inParty.id
   const session = await Session.create({
     sessionId,
