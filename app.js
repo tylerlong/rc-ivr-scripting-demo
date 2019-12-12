@@ -33,6 +33,15 @@ const playAudio = async (session, audioName, interruptByDtmf = false) => {
   return json
 }
 
+const askQuestion = async session => {
+  await playAudio(session, 'question', true)
+  await rc.post(`/restapi/v1.0/account/~/telephony/sessions/${session.sessionId}/parties/${session.partyId}/collect`, {
+    patterns: ['1', '2', '3'],
+    timeout: 600000,
+    interDigitTimeout: 2000
+  })
+}
+
 app.post('/on-call-enter', async (req, res) => {
   console.log('/on-call-enter', JSON.stringify(req.body))
   const { sessionId } = req.body
@@ -44,10 +53,6 @@ app.post('/on-call-enter', async (req, res) => {
   await playAudio(session, 'greetings')
 })
 
-app.post('/on-call-exit', (req, res) => {
-  console.log('/on-call-exit', JSON.stringify(req.body))
-})
-
 app.post('/on-command-update', async (req, res) => {
   console.log('/on-command-update', JSON.stringify(req.body))
   const { command, commandId, status, sessionId, partyId, parameters } = req.body
@@ -55,19 +60,13 @@ app.post('/on-command-update', async (req, res) => {
   if (session === null) {
     return
   }
-  if (command === 'Play' && status === 'Completed') {
+  if (command === 'Play' && (status === 'Completed' || status === 'Interrupted')) {
     if (session.data.greetingsId === commandId) { // After playing greetings
-      await playAudio(session, 'question')
-    } else if (session.data.questionId === commandId) { // After playing question
-      await rc.post(`/restapi/v1.0/account/~/telephony/sessions/${sessionId}/parties/${partyId}/collect`, {
-        patterns: ['1', '2', '3'],
-        timeout: 600000,
-        interDigitTimeout: 2000
-      })
+      await askQuestion(session)
     } else if (session.data.colorId === commandId) { // After playing color confirmation
       await playAudio(session, 'bye')
     } else if (session.data.invalidId === commandId) { // after playing invalid
-      await playAudio(session, 'question')
+      await askQuestion(session)
     }
   } else if (command === 'Collect' && status === 'Completed' && parameters && parameters.digits) {
     const color = { 1: 'red', 2: 'green', 3: 'blue' }[parameters.digits]
@@ -78,6 +77,10 @@ app.post('/on-command-update', async (req, res) => {
   } else if (command === 'Collect' && status === 'Not Found') {
     await playAudio(session, 'invalid')
   }
+})
+
+app.post('/on-call-exit', (req, res) => {
+  console.log('/on-call-exit', JSON.stringify(req.body))
 })
 
 app.post('/on-command-error', (req, res) => {
