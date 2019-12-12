@@ -10,6 +10,7 @@ Phone: Invalid option
 Phone: Which color do you like? 1 for red, 2 for green, 3 for blue
 Customer: 2
 Phone: You like green
+Phone: The demo is over, you may hang up, bye
 ```
 
 ## How to generate audio?
